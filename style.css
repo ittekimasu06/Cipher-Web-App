@@ -1,0 +1,142 @@
+    @font-face {
+        font-family: 'HARLOWSI';
+        src: url(fonts/HARLOWSI.TTF);
+    }
+
+
+    body {
+        background-color: #edeaea;
+        font-family: Inter, sans-serif;
+        margin: 0 auto;
+        background: linear-gradient(to right, #658a82, #3a5d70);
+        
+    }
+
+
+    .banner {
+        background-color: white;
+        padding: 15px 40px;
+    }
+
+    .title {
+        font-family: 'HARLOWSI';
+        font-weight: bold;
+        font-size: 2rem;
+        color:#658a82;
+        margin: 0;
+    }
+
+
+    label {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #596c75;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+  
+
+    .flex {
+        display: flex;
+        margin: 40px;
+        justify-content:center;
+        gap: 20px;
+
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+    }
+
+    .block {
+        background-color: white;
+        width: 300px;
+        border-radius: 5px;
+        padding: 20px 10px;
+        display: flex;
+        flex-direction: column; 
+        gap: 10px;
+        box-shadow: #6e6262 2px 2px 10px;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+
+
+    #ciphertext {
+        resize: none;
+        height: 17px;
+        border: 1px solid #b1b38b;
+        border-radius: 10px;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        padding-left: 10px;
+    }
+
+    input {
+        height: 20px;
+        padding-left: 10px;
+        border: 1px solid #b1b38b;
+        border-radius: 10px;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+
+
+    button {
+        height: 28px;
+        background-color: #3a5d70;
+        color: white;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        
+    }
+
+    button:hover {
+        background-color: #042e3b;
+        transition: 0.2s;
+        cursor: pointer;
+    } 
+
+    #caesar-params, #affine-params {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    select {
+        border: none;
+        background-color: #68707d;
+        height: 28px;
+        color: white;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: bold;
+        padding-left: 5px;
+        border-radius: 10px;
+    }
+
+    select:hover {
+        cursor: pointer;
+        background-color: #042e3b;
+        transition: 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+    }
+
+    #bottom {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #68707d;
+    }
+
