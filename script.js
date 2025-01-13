@@ -13,7 +13,7 @@ function affineCipher(str, a, b, encode = true) {
         for (let x = 1; x < m; x++) {
             if ((a * x) % m === 1) return x;
         }
-        throw new Error('Value of a must be coprime with 26');
+        throw new Error('Giá trị của a phải là nghịch đảo của 26');
     };
 
     if (!encode) a = modInverse(a, m);
@@ -58,7 +58,7 @@ function hillCipher(str, matrixString, encode = true) {
     const matrixSize = Math.sqrt(matrix.length);
 
     if (!Number.isInteger(matrixSize) || matrixSize !== 2) {
-        throw new Error('Matrix must be a 2x2 matrix');
+        throw new Error('Ma trận phải là ma trận 2x2');
     }
 
     const determinant = (matrix) => {
@@ -69,7 +69,7 @@ function hillCipher(str, matrixString, encode = true) {
         for (let x = 1; x < m; x++) {
             if ((a * x) % m === 1) return x;
         }
-        throw new Error('Matrix has no inverse');
+        throw new Error('Ma trận không có nghịch đảo');
     };
 
     const invertMatrix = (matrix) => {
@@ -124,6 +124,58 @@ function aesCipher(str, key, encode = true) {
     }
 }
 
+function rsaCipher(input, p, q, e, encode = true) {
+    const n = p * q;
+    const phi = (p - 1) * (q - 1);
+
+    const gcd = (a, b) => {
+        while (b !== 0) {
+            [a, b] = [b, a % b];
+        }
+        return a;
+    };
+
+    const modInverse = (a, m) => {
+        for (let x = 1; x < m; x++) {
+            if ((a * x) % m === 1) return x;
+        }
+        throw new Error('Không tìm được nghịch đảo modulo.');
+    };
+
+    if (gcd(e, phi) !== 1) {
+        throw new Error('e phải là nguyên tố cùng nhau với ϕ(n).');
+    }
+
+    const d = modInverse(e, phi);
+
+    if (encode) {
+        const asciiValues = input.split('').map(char => char.charCodeAt(0));
+        const ciphertext = asciiValues.map(m => BigInt(m) ** BigInt(e) % BigInt(n));
+        return ciphertext.join(' ');
+    } else {
+        const cipherValues = input.split(' ').map(BigInt); // tách chuỗi và chuyển thành BigInt
+        const originalMessage = cipherValues.map(c => String.fromCharCode(Number(c ** BigInt(d) % BigInt(n))));
+        return originalMessage.join(''); 
+    }
+}
+
+function importTextFile(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('plaintext').value = e.target.result;
+    };
+    reader.readAsText(file);
+}
+
+function exportTextFile(content) {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'result.txt';
+    link.click();
+}
+
 document.getElementById('cipher-type').addEventListener('change', function () {
     const caesarParams = document.getElementById('caesar-params');
     const affineParams = document.getElementById('affine-params');
@@ -131,6 +183,7 @@ document.getElementById('cipher-type').addEventListener('change', function () {
     const hillParams = document.getElementById('hill-params');
     const desParams = document.getElementById('des-params');
     const aesParams = document.getElementById('aes-params');
+    const rsaParams = document.getElementById('rsa-params');
 
     caesarParams.style.display = 'none';
     affineParams.style.display = 'none';
@@ -138,6 +191,7 @@ document.getElementById('cipher-type').addEventListener('change', function () {
     hillParams.style.display = 'none';
     desParams.style.display = 'none';
     aesParams.style.display = 'none';
+    rsaParams.style.display = 'none';
 
     if (this.value === 'caesar') caesarParams.style.display = 'flex';
     else if (this.value === 'affine') affineParams.style.display = 'flex';
@@ -145,6 +199,7 @@ document.getElementById('cipher-type').addEventListener('change', function () {
     else if (this.value === 'hill') hillParams.style.display = 'flex';
     else if (this.value === 'des') desParams.style.display = 'flex';
     else if (this.value === 'aes') aesParams.style.display = 'flex';
+    else if (this.value === 'rsa') rsaParams.style.display = 'flex';
 });
 
 function processText() {
@@ -179,6 +234,12 @@ function processText() {
             const key = document.getElementById('aes-key').value;
             const mode = document.getElementById('aes-mode').value;
             result = aesCipher(plaintext, key, mode === 'encode');
+        } else if (cipherType === 'rsa') {
+            const p = parseInt(document.getElementById('p').value);
+            const q = parseInt(document.getElementById('q').value);
+            const e = parseInt(document.getElementById('e').value);
+            const mode = document.getElementById('rsa-mode').value;
+            result = rsaCipher(plaintext, p, q, e, mode === 'encode');
         }
 
         document.getElementById('ciphertext').value = result;
@@ -186,3 +247,10 @@ function processText() {
         document.getElementById('ciphertext').value = error.message;
     }
 }
+
+document.getElementById('file-input').addEventListener('change', importTextFile);
+
+document.getElementById('export-button').addEventListener('click', function() {
+    const result = document.getElementById('ciphertext').value;
+    exportTextFile(result);
+});

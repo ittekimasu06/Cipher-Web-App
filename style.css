@@ -71,6 +71,7 @@ footer {
     bottom: 0;
     left: 0;
     width: 100%;
+    background-color: #003300;
 }
 
 
@@ -128,6 +129,21 @@ select {
     border-radius: 10px;
 }
 
+#file-input {
+    cursor: pointer;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    background-color: #3a5d70;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
 select:hover {
     cursor: pointer;
     background-color: #042e3b;
@@ -141,6 +157,16 @@ input:focus, textarea:focus, select:focus {
 #bottom {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     color: #68707d;
+}
+
+#footerr {
+    display: flex;
+    justify-content: space-between;
+}
+
+#github-logo {
+    width: 40px;
+    height: 40px;
 }
 
 @media screen and (max-width: 1200px) {

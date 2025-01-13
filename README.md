@@ -7,6 +7,7 @@ Contains:
 - Caesar Cipher
 - Affine Cipher
 - Vigenere Cipher
-- Hill
-- DES
-- AES
+- Hill Cipher
+- DES Cipher
+- AES Cipher
+- RSA Cipher

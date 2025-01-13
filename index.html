@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +17,10 @@
     <div class="controls">
         <div class="flex">
             <div class="block">
-                <label for="plaintext">Plain Text:</label>
+                <label for="plaintext">Plain Text/Encrypted Text:</label>
                 <input type="text" id="plaintext" name="plaintext">
+                <label for="file-input">Import Text File:</label>
+                <input type="file" id="file-input" accept=".txt">
             </div>
 
             <div class="block">
@@ -30,6 +32,7 @@
                     <option value="hill">Hill Cipher</option>
                     <option value="des">DES Cipher</option>
                     <option value="aes">AES Cipher</option>
+                    <option value="rsa">RSA Cipher</option>
                 </select>
             </div>
             
@@ -114,16 +117,40 @@
                 <button onclick="processText()">Submit</button>
             </div>
     
+            <div id="rsa-params" class="block" style="display: none;">
+                <label for="p">p:</label>
+                <input type="number" id="p" name="p" min="2">
+
+                <label for="q">q:</label>
+                <input type="number" id="q" name="q" min="2">
+
+                <label for="e">e:</label>
+                <input type="number" id="e" name="e" min="2">
+
+                <label for="rsa-mode">Mode:</label>
+                <select id="rsa-mode" name="rsa-mode">
+                    <option value="encode">Encode</option>
+                    <option value="decode">Decode</option>
+                </select>
+
+                <button onclick="processText()">Submit</button>
+            </div>
+    
             <div class="block">
                 <label for="ciphertext">Result:</label>
                 <textarea id="ciphertext" name="ciphertext"></textarea>
+                <button onclick="exportTextFile(document.getElementById('ciphertext').value)">Export Result</button>
             </div>
+
         </div>
     </div>
 
     <footer>
-        <div class="banner">
+        <div class="banner" id="footerr">
             <p id="bottom">© Doanh Website</p>
+            <a href="https://github.com/ittekimasu06/Cipher-Web-App.git">
+                <img src="github.png" id="github-logo" alt="github">
+            </a>
         </div>
     </footer>
 
