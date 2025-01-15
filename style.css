@@ -5,15 +5,17 @@
 
 
 body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
     background-color: #edeaea;
     font-family: Inter, sans-serif;
     margin: 0 auto;
-    height: 100%;
     background: linear-gradient(to right, #658a82, #3a5d70);
 }
 
 header {
-    flex-shrink: 0;
     margin-bottom: 10px;
 }
 
@@ -30,15 +32,12 @@ header {
     margin: 0;
 }
 
-
 label {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     color: #596c75;
     font-weight: bold;
     font-size: 0.9rem;
 }
-
-
 
 .flex {
     display: flex;
@@ -49,12 +48,11 @@ label {
 }
 
 .controls {
-    margin-top: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    padding: 20px;
 }
 
 .block {
@@ -69,11 +67,7 @@ label {
 }
 
 footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #003300;
+    margin-top: 10px;
 }
 
 
