@@ -4,10 +4,10 @@ URL: https://ittekimasu06.github.io/Cipher-Web-App/
 Small web app to implement some cipher algos.
 
 Contains:
-- Caesar Cipher
-- Affine Cipher
-- Vigenere Cipher
-- Hill Cipher
-- DES Cipher
-- AES Cipher
-- RSA Cipher
+- Caesar
+- Affine 
+- Vigenere 
+- Hill 
+- DES 
+- AES 
+- RSA

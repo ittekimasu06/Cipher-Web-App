@@ -8,24 +8,18 @@ function caesarCipher(str, shift, encode = true) {
 
 function affineCipher(str, a, b, encode = true) {
     const m = 26;
-
     const modInverse = (a, m) => {
         for (let x = 1; x < m; x++) {
             if ((a * x) % m === 1) return x;
         }
         throw new Error('Giá trị của a phải là nghịch đảo của 26');
     };
-
     if (!encode) a = modInverse(a, m);
-
     return str.replace(/[a-z]/gi, char => {
         const isUpperCase = char <= 'Z';
         const start = isUpperCase ? 65 : 97;
         const x = char.charCodeAt(0) - start;
-
-        const result = encode
-            ? (a * x + b) % m
-            : ((x - b) * a + m * 26) % m; 
+        const result = encode ? (a * x + b) % m : ((x - b) * a + m * 26) % m;
         return String.fromCharCode(start + result);
     });
 }
@@ -34,17 +28,13 @@ function vigenereCipher(str, keyword, encode = true) {
     const m = 26;
     keyword = keyword.toLowerCase();
     let keywordIndex = 0;
-
     return str.replace(/[a-z]/gi, char => {
         const isUpperCase = char <= 'Z';
         const start = isUpperCase ? 65 : 97;
         const x = char.charCodeAt(0) - start;
-
         if (/[a-z]/i.test(char)) {
             const k = keyword.charCodeAt(keywordIndex % keyword.length) - 97;
-            const result = encode
-                ? (x + k) % m
-                : (x - k + m) % m;
+            const result = encode ? (x + k) % m : (x - k + m) % m;
             keywordIndex++;
             return String.fromCharCode(start + result);
         }
@@ -53,59 +43,54 @@ function vigenereCipher(str, keyword, encode = true) {
 }
 
 function hillCipher(str, matrixString, encode = true) {
-    const mod = 26;
     const matrix = matrixString.split(',').map(Number);
-    const matrixSize = Math.sqrt(matrix.length);
-
-    if (!Number.isInteger(matrixSize) || matrixSize !== 2) {
-        throw new Error('Ma trận phải là ma trận 2x2');
+    if (matrix.length !== 4) {
+        throw new Error("Không phải ma trận 2x2.");
     }
-
-    const determinant = (matrix) => {
-        return (matrix[0] * matrix[3] - matrix[1] * matrix[2]) % mod;
+    const keyMatrix = [
+        [matrix[0], matrix[1]],
+        [matrix[2], matrix[3]]
+    ];
+    const charToNum = (char) => {
+        const base = char === char.toUpperCase() ? 65 : 97;
+        return char.charCodeAt(0) - base;
     };
-
-    const modInverse = (a, m) => {
-        for (let x = 1; x < m; x++) {
-            if ((a * x) % m === 1) return x;
+    const numToChar = (num, isUpperCase) => {
+        const base = isUpperCase ? 65 : 97;
+        return String.fromCharCode((num % 26 + 26) % 26 + base);
+    };
+    const multiplyMatrix = (matrix, vector) => [
+        (matrix[0][0] * vector[0] + matrix[0][1] * vector[1]) % 26,
+        (matrix[1][0] * vector[0] + matrix[1][1] * vector[1]) % 26
+    ];
+    if (!encode) {
+        const det = (keyMatrix[0][0] * keyMatrix[1][1] - keyMatrix[0][1] * keyMatrix[1][0]) % 26;
+        const detInverse = [...Array(26).keys()].find(i => (det * i) % 26 === 1);
+        if (detInverse === undefined) {
+            throw new Error("Ma trận không thể nghịch đảo theo mod 26.");
         }
-        throw new Error('Ma trận không có nghịch đảo');
-    };
-
-    const invertMatrix = (matrix) => {
-        const det = determinant(matrix);
-        const invDet = modInverse((det + mod) % mod, mod);
-        return [
-            (matrix[3] * invDet) % mod,
-            (-matrix[1] * invDet + mod) % mod,
-            (-matrix[2] * invDet + mod) % mod,
-            (matrix[0] * invDet) % mod
+        const adjMatrix = [
+            [keyMatrix[1][1], -keyMatrix[0][1]],
+            [-keyMatrix[1][0], keyMatrix[0][0]]
         ];
-    };
-
-    const multiplyMatrix = (vector, matrix) => {
-        return [
-            (vector[0] * matrix[0] + vector[1] * matrix[1]) % mod,
-            (vector[0] * matrix[2] + vector[1] * matrix[3]) % mod
-        ];
-    };
-
-    const textToVector = (text) => {
-        return text.split('').map(char => char.charCodeAt(0) - 97);
-    };
-
-    const vectorToText = (vector) => {
-        return vector.map(num => String.fromCharCode(num + 97)).join('');
-    };
-
-    const vectors = [];
-    for (let i = 0; i < str.length; i += matrixSize) {
-        const vector = textToVector(str.slice(i, i + matrixSize));
-        if (vector.length === matrixSize) vectors.push(vector);
+        keyMatrix[0][0] = (detInverse * adjMatrix[0][0]) % 26;
+        keyMatrix[0][1] = (detInverse * adjMatrix[0][1]) % 26;
+        keyMatrix[1][0] = (detInverse * adjMatrix[1][0]) % 26;
+        keyMatrix[1][1] = (detInverse * adjMatrix[1][1]) % 26;
     }
-
-    const keyMatrix = encode ? matrix : invertMatrix(matrix);
-    return vectors.map(vector => vectorToText(multiplyMatrix(vector, keyMatrix))).join('');
+    const sanitizedStr = str.replace(/[^A-Za-z]/g, '');
+    const paddedStr = sanitizedStr + (sanitizedStr.length % 2 === 1 ? 'x' : '');
+    let result = '';
+    for (let i = 0; i < paddedStr.length; i += 2) {
+        const char1 = paddedStr[i];
+        const char2 = paddedStr[i + 1];
+        const isUpperCase1 = char1 === char1.toUpperCase();
+        const isUpperCase2 = char2 === char2.toUpperCase();
+        const vector = [charToNum(char1), charToNum(char2)];
+        const transformed = multiplyMatrix(keyMatrix, vector);
+        result += numToChar(transformed[0], isUpperCase1) + numToChar(transformed[1], isUpperCase2);
+    }
+    return result;
 }
 
 function desCipher(str, key, encode = true) {
@@ -127,35 +112,30 @@ function aesCipher(str, key, encode = true) {
 function rsaCipher(input, p, q, e, encode = true) {
     const n = p * q;
     const phi = (p - 1) * (q - 1);
-
     const gcd = (a, b) => {
         while (b !== 0) {
             [a, b] = [b, a % b];
         }
         return a;
     };
-
     const modInverse = (a, m) => {
         for (let x = 1; x < m; x++) {
             if ((a * x) % m === 1) return x;
         }
         throw new Error('Không tìm được nghịch đảo modulo.');
     };
-
     if (gcd(e, phi) !== 1) {
         throw new Error('e phải là nguyên tố cùng nhau với ϕ(n).');
     }
-
     const d = modInverse(e, phi);
-
     if (encode) {
         const asciiValues = input.split('').map(char => char.charCodeAt(0));
         const ciphertext = asciiValues.map(m => BigInt(m) ** BigInt(e) % BigInt(n));
         return ciphertext.join(' ');
     } else {
-        const cipherValues = input.split(' ').map(BigInt); // tách chuỗi và chuyển thành BigInt
+        const cipherValues = input.split(' ').map(BigInt);
         const originalMessage = cipherValues.map(c => String.fromCharCode(Number(c ** BigInt(d) % BigInt(n))));
-        return originalMessage.join(''); 
+        return originalMessage.join('');
     }
 }
 
@@ -205,9 +185,7 @@ document.getElementById('cipher-type').addEventListener('change', function () {
 function processText() {
     const cipherType = document.getElementById('cipher-type').value;
     const plaintext = document.getElementById('plaintext').value;
-
     let result = '';
-
     try {
         if (cipherType === 'caesar') {
             const shift = parseInt(document.getElementById('shift').value);
@@ -241,7 +219,6 @@ function processText() {
             const mode = document.getElementById('rsa-mode').value;
             result = rsaCipher(plaintext, p, q, e, mode === 'encode');
         }
-
         document.getElementById('ciphertext').value = result;
     } catch (error) {
         document.getElementById('ciphertext').value = error.message;
@@ -249,7 +226,6 @@ function processText() {
 }
 
 document.getElementById('file-input').addEventListener('change', importTextFile);
-
 document.getElementById('export-button').addEventListener('click', function() {
     const result = document.getElementById('ciphertext').value;
     exportTextFile(result);
